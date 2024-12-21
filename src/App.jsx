@@ -1,9 +1,11 @@
-import Button from '@mui/material/Button';
-import HomeIcon from '@mui/icons-material/Home';
+import Button from '@mui/material/Button'
+import HomeIcon from '@mui/icons-material/Home'
+import Typography from '@mui/material/Typography'
 
 function App() {
   return (
     <>
+      <Typography variant="h1">Hello, world!</Typography>
       <div>ToanNguyenDev</div>
       <Button variant="text">Text</Button>
       <Button variant="contained">Contained</Button>
