@@ -11,7 +11,8 @@ import Select from '@mui/material/Select'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
-import { Margin } from '@mui/icons-material'
+import { Box } from '@mui/material'
+
 
 
 function ModeSelect() {
@@ -35,11 +36,14 @@ function ModeSelect() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <LightModeIcon fontSize='small'/>Light
           </div>
-        </MenuItem>
+        </MenuItem> 
         <MenuItem value="dark">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px'}}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <DarkModeOutlinedIcon fontSize='small' />Dark
+          </Box>
+          {/* <div style={{ display: 'flex', alignItems: 'center', gap: '8px'}}>
             <DarkModeOutlinedIcon fontSize='small'/>Dark
-          </div>
+          </div> */}
         </MenuItem>
         <MenuItem value="system">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
