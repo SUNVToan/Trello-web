@@ -1,7 +1,4 @@
-import { deepOrange } from '@mui/material/colors'
-import { orange } from '@mui/material/colors'
-import { teal } from '@mui/material/colors'
-import { cyan } from '@mui/material/colors'
+import { deepOrange, orange, teal, cyan, grey, blueGrey } from '@mui/material/colors';
 import { experimental_extendTheme as extendTheme} from '@mui/material/styles'
 
 // Create a theme instance.
@@ -14,13 +11,29 @@ const theme = extendTheme({
     light: {
       palette: {
         primary: teal,
-        secondary: deepOrange
+        secondary: deepOrange,
+        background: {
+          default: grey[300],
+          paper: grey[100],
+        },
+        text: {
+          primary: grey[900],
+          secondary: grey[700],
+        },
       },
     },
     dark: {
       palette: {
         primary: cyan,
-        secondary: orange        
+        secondary: orange,
+        background: {
+          default: blueGrey[900],
+          paper: blueGrey[800],
+        },
+        text: {
+          primary: grey[100],
+          secondary: grey[300],
+        },
       },
     },
   },
@@ -29,6 +42,7 @@ const theme = extendTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
+          borderRadius: '8px',
         },
       },
     },
@@ -40,7 +54,7 @@ const theme = extendTheme({
           '& .MuiOutlinedInput-notchedOutline': {
             borderColor: theme.palette.primary.light,
           },
-          '&:hover': {
+          '&:hover .MuiOutlinedInput-notchedOutline': {
             borderColor: theme.palette.primary.main,
           },
         }),
