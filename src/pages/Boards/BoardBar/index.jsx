@@ -12,14 +12,14 @@ import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 
 const chipStyle = { 
-  color: 'pirmary.main',
-  bgcolor: 'background.paper',
+  color: 'white',
+  bgcolor: 'transparent',
   border: 'none',
   cursor: 'pointer',
   px: '5px',
   borderRadius: '4px',
-  '& .MuiSvgIcon-root, .MuiChip-label': {
-    color: 'primary.main',
+  '.MuiSvgIcon-root, .MuiChip-label': {
+    color: 'white',
   },
   '&:hover': {
     bgcolor: 'primary.100',
@@ -29,7 +29,6 @@ const chipStyle = {
 function BoadBar() {
   return (
     <Box sx={{
-      backgroundColor: 'background.paper',
       width: '100%',
       height: (theme) => theme.trello.boardBarHeight,
       display: 'flex',
@@ -38,7 +37,8 @@ function BoadBar() {
       gap: 2,
       padding: '0 16px',
       overflowX: 'auto',
-      borderTop: '1px solid #00bfa5',
+      bgcolor: (theme) => theme.palette.mode === 'dark' ? '#34495e' : '#1976d2',
+      borderBottom: '1px solid white',
     }}>
       <LeftSection />
       <RightSection />
@@ -85,15 +85,21 @@ function LeftSection() {
 
 function RightSection() {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-      <Button variant="outlined" startIcon={<PersonAddIcon />}>Invite</Button>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Button
+        variant="outlined"
+        startIcon={<PersonAddIcon />}
+        sx={{ color: 'white', border: 'none', '&:hover': { border: 'none' } }}
+      >Invite</Button>
       <AvatarGroup
         max={5}
         sx={{
+          gap: '10px',
           '& .MuiAvatar-root': {
             width: 34,
             height: 34,
             fontSize: 16,
+            border: 'none'
           }
         }}
       >
