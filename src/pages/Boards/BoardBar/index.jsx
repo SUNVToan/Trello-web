@@ -39,6 +39,7 @@ function BoadBar() {
       overflowX: 'auto',
       bgcolor: (theme) => theme.palette.mode === 'dark' ? '#34495e' : '#1976d2',
       borderBottom: '1px solid white',
+      '&::-webkit-scrollbar-track': { m: 2 }
     }}>
       <LeftSection />
       <RightSection />
@@ -99,7 +100,10 @@ function RightSection() {
             width: 34,
             height: 34,
             fontSize: 16,
-            border: 'none'
+            border: 'none',
+            color: 'white',
+            cursor: 'pointer',
+            '&:first-of-type': {bgcolor: '#a4b0be'},
           }
         }}
       >

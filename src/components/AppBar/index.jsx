@@ -22,10 +22,8 @@ import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 
 function AppBar() {
-
   return (
     <Box px={2} sx={{
-      backgroundColor: 'background.paper',
       width: '100%',
       height: (theme) => theme.trello.appBarHeight,
       display: 'flex',
@@ -34,6 +32,7 @@ function AppBar() {
       gap: 2,
       overflowX: 'auto',
       bgcolor: (theme) => theme.palette.mode === 'dark' ? '#2c3e50' : '#1565c0',
+      '&::-webkit-scrollbar-track': { m: 2 }
     }}>
       <LeftSection />
       <RightSection />
