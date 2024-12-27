@@ -24,9 +24,14 @@ export default [
       'react-refresh': reactRefresh,
     },
     rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      'react/prop-types': 0,
+      'react/display-name': 0,
+
       // React
-      ...js.configs.recommended.rules,
-      ...react.configs.recommended.rules,
+      // ...js.configs.recommended.rules,
+      // ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       // MUI

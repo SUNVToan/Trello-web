@@ -19,7 +19,7 @@ import Button from '@mui/material/Button'
 import ListCards from './ListCards/ListCards'
 
 
-function Column() {
+function Column({ column }) {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => setAnchorEl(event.currentTarget)
@@ -51,7 +51,7 @@ function Column() {
             fontWeight: 'bold',
             cursor: 'pointer',
           }}
-        >Column Title</Typography>
+        >{ column?.title }</Typography>
         <Box >
           <Tooltip title="Column actions">
             <ExpandMoreIcon
@@ -102,7 +102,7 @@ function Column() {
       </Box>
 
       {/* Box List card */}
-      <ListCards />
+      <ListCards cards={ column?.cards } />
       
       {/* Box column Footer */}
       <Box sx={{
