@@ -10,6 +10,7 @@ import AvatarGroup from '@mui/material/AvatarGroup'
 import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import { capitalizeFirstLetter } from '~/utils/formatter'
 
 const chipStyle = { 
   color: 'white',
@@ -26,7 +27,7 @@ const chipStyle = {
   },
 }
 
-function BoadBar() {
+function BoardBar({ board }) {
   return (
     <Box sx={{
       width: '100%',
@@ -40,31 +41,31 @@ function BoadBar() {
       bgcolor: (theme) => theme.palette.mode === 'dark' ? '#34495e' : '#1976d2',
       '&::-webkit-scrollbar-track': { m: 2 }
     }}>
-      <LeftSection />
-      <RightSection />
+      <LeftSection board={board} />
+      <RightSection board={board} />
     </Box>
   )
 }
 
-function LeftSection() {
+function LeftSection({ board }) {  
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
       <Chip
         sx={chipStyle}
         icon={<DashboardIcon />}
-        label="Levi DashBoard"
+        label={ board?.title}
         clickable
       />
       <Chip
         sx={chipStyle}
         icon={<VpnLockIcon />}
-        label="Public/Private Workspace" 
+        label={ capitalizeFirstLetter(board?.type) }
         clickable
       />
       <Chip
         sx={chipStyle}
         icon={<AddToDriveIcon />}
-        label="Add to Google Drive" 
+        label="Add to Google Drive"
         clickable
       />
       <Chip
@@ -129,4 +130,4 @@ function RightSection() {
   );
 }
 
-export default BoadBar
+export default BoardBar
