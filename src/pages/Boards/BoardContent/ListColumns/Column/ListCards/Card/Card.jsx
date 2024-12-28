@@ -9,7 +9,7 @@ import CardMedia from '@mui/material/CardMedia'
 import GroupIcon from '@mui/icons-material/Group'
 import ModeCommentIcon from '@mui/icons-material/ModeComment'
 import AttachmentIcon from '@mui/icons-material/Attachment'
-import PropTypes from 'prop-types'
+
 
 function Card({ card }) {
   const shouldShowActions = () => {
@@ -38,10 +38,6 @@ function Card({ card }) {
       }
     </MuiCard>
   )
-}
-
-Card.propTypes = {
-  temporaryHideMedia: PropTypes.bool.isRequired,
 }
 
 export default Card
