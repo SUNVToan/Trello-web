@@ -13,7 +13,7 @@ import PropTypes from 'prop-types'
 
 function Card({ card }) {
   const shouldShowActions = () => {
-    return card?.memberIds.length || card?.comments.length || card?.attachments.length
+    return !!card?.memberIds.length || !!card?.comments.length || !!card?.attachments.length
   }
 
   return (
