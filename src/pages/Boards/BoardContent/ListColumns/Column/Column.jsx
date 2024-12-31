@@ -35,6 +35,7 @@ function Column({ column }) {
     // https://github.com/clauderic/dnd-kit/issues/117
     transform: CSS.Translate.toString(transform),
     transition,
+    height: '100%',
     opacity: isDragging ? 0.5 : undefined,
   };
 
@@ -46,9 +47,8 @@ function Column({ column }) {
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
   return (
-    <div ref={setNodeRef} >
+    <div ref={setNodeRef} style={dndKitColumnStyles} >
       <Box
-        style={dndKitColumnStyles}
         {...attributes}
         {...listeners}
         sx={{
