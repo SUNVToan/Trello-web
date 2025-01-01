@@ -36,7 +36,7 @@ function Column({ column }) {
     transform: CSS.Translate.toString(transform),
     transition,
     height: '100%',
-    opacity: isDragging ? 0.5 : undefined,
+    opacity: isDragging ? 0.5 : undefined
   };
 
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -44,6 +44,7 @@ function Column({ column }) {
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleClose = () => setAnchorEl(null)
 
+  // Sort cards
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
   return (
