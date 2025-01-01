@@ -1,34 +1,32 @@
 import Box from '@mui/material/Box'
 import ListColumns from './ListColumns/ListColumns'
 import { mapOrder } from '~/utils/sorts'
-// dnd-kit
 import {
   DndContext,
-  // PointerSensor,
   MouseSensor,
   TouchSensor,
   useSensor,
   useSensors,
   DragOverlay,
   defaultDropAnimationSideEffects,
-  closestCorners
+  closestCorners,
+  pointerWithin,
+  getFirstCollision
 } from '@dnd-kit/core'
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useCallback, useRef} from 'react'
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
 import { cloneDeep, set } from 'lodash'
 import { arrayMove } from '@dnd-kit/sortable'
-
+// ===========***===========
 // Active Drag Item Type
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
-
+// ===========***===========
 function BoardContent({ board }) {
   // https://docs.dndkit.com/api-documentation/sensors
-  // Nếu dùng pointerSensor thì phải đi kèm với touchAction: 'none' mới có thể kéo trên mobile. Nhưng hiện còn bug khi kéo trên mobile
-  // const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })  
   // Yêu cầu chuột di chuyển 10px mới kích hoạt event, fix trường hợp click bị gọi handleDragEnd event
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })  
   // Nhấn giữ 250ms và dung sai của cảm ứng (Dẽ hiểu là di chuyển/chênh lệch 5xp) thì mới kích hoạt event
@@ -36,25 +34,24 @@ function BoardContent({ board }) {
   const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
   const sensors = useSensors(mouseSensor, touchSensor)
   const [orderedColumns, setOrderedColumns] = useState([])
-
   // Active Drag Item
   const [activeDragItemId, setActiveDragItemId] = useState(null)
   const [activeDragItemType, setActiveDragItemType] = useState(null)
   const [activeDragItemData, setActiveDragItemData] = useState(null)
   const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState(null)
-
+  // Điểm va chạm cuối cùng (Xử lý thuật toán phát hiện va chạm khi kéo thả)
+  const lastOverId = useRef(null)
   // Update lại orderedColumns khi board thay đổi
   useEffect(() => {
     const orderedColumns = mapOrder(board?.columns, board?.columnOrderIds, '_id')
     setOrderedColumns(orderedColumns)
   }, [board])
-
   // Tìm Một cái column theo cardId
   const findColumnById = (cardId) => {
     // Đoạn này lưu ý, nên dùng c.cards thay vì c.cardOrderIds vì ở bước handleDragOver chúng ta sẽ làm dữ liệu cho cards hoàn chỉnh trước rồi mới tạo ra cardOrdeIds mới.
     return orderedColumns.find(c => c?.cards?.map(card => card?._id).includes(cardId))
   }
-
+// ===========***===========
   // Cập nhật lại state trong trường hợp di chuyển card giữa các column khác nhau
   const moveCardBetweenDifferentColumns = (
     overColumn,
@@ -101,7 +98,7 @@ function BoardContent({ board }) {
       return nextColumns
     })
   }
-
+// ===========***===========
   // Trigger khi bắt đầu kéo thả
   const handleDragStart = (event) => {
     // console.log('handleDragStart', event)
@@ -114,9 +111,10 @@ function BoardContent({ board }) {
       setOldColumnWhenDraggingCard(oldColumn)
     }
   }
-
+// ===========***===========
   // Trigger khi kéo qua
   const handleDragOver = (event) => {
+    // console.log('handleDragOver', event)
     // Keo Column thi khong lam gi ca
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) return
     // console.log('handleDragOver', event)
@@ -146,7 +144,7 @@ function BoardContent({ board }) {
       )
     }
   }
-
+// ===========***===========
   // Trigger khi kéo qua
   const handleDragEnd = (event) => {
     // console.log('handleDragEnd', event)
@@ -220,10 +218,42 @@ function BoardContent({ board }) {
     setActiveDragItemData(null)
     setOldColumnWhenDraggingCard(null)
   }
+
   // Khi thả element thì sẽ có animation
   const customDropAnimation = {
     sideEffects: defaultDropAnimationSideEffects({styles: { active: { opacity: '0.5'} } } )
   }
+// ===========***===========
+  // Custom Thuật toán phát hiện va chạm 
+  const collisionDetectionStrategy = useCallback((args) => {
+    // Trường hợp kéo column thì dùng thuật toán closestCorners là chuẩn nhất
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+      return closestCorners({ ...args })
+    }
+    // Tìm các điểm giao nhau, va chạm - intersections với con trỏ 
+    const pointerIntersection = pointerWithin(args)
+    // Nếu không có va chạm thì return
+    if (!pointerIntersection?.length) return
+    // Lấy overId đầu tiên trong đám pointerIntersection ở trên
+    let overId = getFirstCollision(pointerIntersection, 'id')
+    if (overId) {
+      const checkColumn = orderedColumns.find(column => column._id === overId)
+      if (checkColumn) {
+        // console.log('over Id before: ', overId)
+        overId = closestCorners({
+          ...args,
+          droppableContainers: args.droppableContainers.filter(container => {
+            return (container.id !== overId) && (checkColumn?.cardOrderIds?.includes(container.id))
+          })
+        })[0]?.id
+        // console.log('over Id after: ', overId)
+        return [{id: overId}]
+      }
+      lastOverId.current = overId
+      return [{id: overId}]
+    }
+    return lastOverId.current ? [{id: lastOverId.current}] : []
+  }, [activeDragItemType])
   
   return (
     <DndContext
@@ -231,10 +261,13 @@ function BoardContent({ board }) {
       sensors={sensors}
       // Thật toán phát hiện va chạm (Collsion detection algorithm)
       // https://docs.dndkit.com/api-documentation/context-provider/collision-detection-algorithms
-      collisionDetection={closestCorners}
+      // Nếu dùng cái này thì sẽ bị lỗi flickering khi kéo card
+      // collisionDetection={closestCorners} 
+      collisionDetection={collisionDetectionStrategy}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd} >
+      onDragEnd={handleDragEnd}
+    >
       <Box sx={{
         bgcolor: (theme) => theme.palette.mode === 'dark' ? '#34495e' : '#1976d2',
         width: '100%',
@@ -243,7 +276,7 @@ function BoardContent({ board }) {
       }}>
         <ListColumns columns={ orderedColumns } />
         <DragOverlay dropAnimation={customDropAnimation}>
-          {(!activeDragItemType) && null}
+          {/* {(!activeDragItemType) && null} */}
           {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} />}
           {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) && <Card card={activeDragItemData}/>}
         </DragOverlay>
