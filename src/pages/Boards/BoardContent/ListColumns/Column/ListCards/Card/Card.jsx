@@ -29,17 +29,20 @@ function Card({ card }) {
   };
 
   const shouldShowActions = () => {
-    return !!card?.memberIds.length || !!card?.comments.length || !!card?.attachments.length
+    return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachments?.length
   }
 
   return (
     <MuiCard
       ref={setNodeRef} style={dndKitCardStyles} {...attributes} {...listeners}
       sx={{ 
-      cursor: 'pointer',
-      boxShadow: '0 1px 1px rgba(0,0,0,0.2)',
-      overflow: 'unset',
-    }}>
+        cursor: 'pointer',
+        boxShadow: '0 1px 1px rgba(0,0,0,0.2)',
+        overflow: 'unset',
+        display: card?.FE_PlaceHolderCard ? 'none' : 'block'
+        // overflow:  card?.FE_PlaceHolderCard ? 'hidden' : 'unset'
+        // height: card?.FE_PlaceHolderCard ? '0' : 'unset'
+      }}>
       {card?.cover && <CardMedia sx={{ height: 140 }} image={card?.cover}/>}
       <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
         <Typography>{ card?.title }</Typography>
